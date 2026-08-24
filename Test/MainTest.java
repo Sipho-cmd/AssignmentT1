@@ -41,11 +41,9 @@ class MainTest {
     //TEST MAIN METHOD
     @Test
     void testMainMethodExit() {
-        // Test that main exits when user selects 0
         provideInput("0" + NEWLINE);
 
-        // Since main runs in a loop, we need to run it in a separate thread
-        // or we can just test that it doesn't throw exceptions
+
         assertDoesNotThrow(() -> Main.main(new String[]{}));
     }
 
@@ -119,7 +117,6 @@ class MainTest {
 
     @Test
     void testRegisterPatientEmergency() {
-        // Simulate user input for registering an emergency patient
         String input = "P003" + NEWLINE +
                 "Bob" + NEWLINE +
                 "Johnson" + NEWLINE +
@@ -144,13 +141,10 @@ class MainTest {
     }
 
     //TEST SEARCH PATIENT
-
     @Test
     void testSearchPatientFound() {
-        // First register a patient
         registerTestPatient("P001", "John", "Doe");
 
-        // Then search for them
         provideInput("P001" + NEWLINE);
         Main.searchPatient();
 
@@ -169,13 +163,10 @@ class MainTest {
     }
 
     //TEST UPDATE PATIENT
-
     @Test
     void testUpdatePatientFound() {
-        // First register a patient
         registerTestPatient("P001", "John", "Doe");
 
-        // Then update them
         String input = "P001" + NEWLINE +
                 "Jonathan" + NEWLINE +
                 "Doe-Smith" + NEWLINE +
@@ -207,20 +198,16 @@ class MainTest {
     }
 
     //TEST DELETE PATIENT
-
     @Test
     void testDeletePatientFound() {
-        // First register a patient
         registerTestPatient("P001", "John", "Doe");
 
-        // Then delete them
         provideInput("P001" + NEWLINE);
         Main.deletePatient();
 
         String output = outputStream.toString();
         assertTrue(output.contains("Patient deleted successfully."));
 
-        // Verify patient is gone
         Patient found = Main.findPatient("P001");
         assertNull(found);
     }
@@ -235,15 +222,12 @@ class MainTest {
     }
 
     //TEST DISPLAY ALL PATIENTS
-
     @Test
     void testDisplayAllPatientsWithPatients() {
-        // Register multiple patients
         registerTestPatient("P001", "John", "Doe");
         registerTestPatient("P002", "Jane", "Smith");
         registerTestPatient("P003", "Bob", "Johnson");
 
-        // Reset output stream to clear registration messages
         outputStream.reset();
 
         Main.displayAllPatients();
@@ -269,18 +253,13 @@ class MainTest {
 
     @Test
     void testAllocateBed() {
-        // Register a patient first
         registerTestPatient("P001", "John", "Doe");
 
-        // Allocate bed
         String input = "P001" + NEWLINE +
                 "B01" + NEWLINE;
         provideInput(input);
         Main.allocateBed();
 
-        // We can't directly verify bed allocation from Main,
-        // but we can verify the method doesn't throw exceptions
-        // The Ward class methods handle the actual allocation
         assertDoesNotThrow(() -> Main.allocateBed());
     }
 
@@ -288,10 +267,8 @@ class MainTest {
 
     @Test
     void testReleaseBed() {
-        // Allocate a bed first
         Main.ward.allocateBed("B01", "P001");
 
-        // Release bed
         provideInput("B01" + NEWLINE);
         Main.releaseBed();
 
@@ -299,7 +276,6 @@ class MainTest {
     }
 
     //TEST PATIENT REPORT
-
     @Test
     void testPatientReport() {
         // Register multiple patients with different last names
@@ -307,7 +283,6 @@ class MainTest {
         registerTestPatient("P002", "Jane", "Apple");
         registerTestPatient("P003", "Bob", "Mango");
 
-        // Reset output stream to clear registration messages
         outputStream.reset();
 
         Main.patientReport();
@@ -316,7 +291,6 @@ class MainTest {
         assertTrue(output.contains("--- Patient Report (sorted by surname) ---"));
         assertTrue(output.contains("Total registered patients: 3"));
 
-        // Check order (Apple should come before Mango, before Zebra)
         int appleIndex = output.indexOf("Apple");
         int mangoIndex = output.indexOf("Mango");
         int zebraIndex = output.indexOf("Zebra");
@@ -332,7 +306,6 @@ class MainTest {
     }
 
     //TEST BED OCCUPANCY REPORT
-
     @Test
     void testBedOccupancyReport() {
         // Allocate some beds
@@ -359,7 +332,6 @@ class MainTest {
     }
 
     //TEST FIND PATIENT
-
     @Test
     void testFindPatientFound() {
         registerTestPatient("P001", "John", "Doe");
@@ -385,9 +357,7 @@ class MainTest {
         assertEquals("P001", found.getPatientID());
     }
 
-    //HELPER METHODS
     private void registerTestPatient(String id, String firstName, String lastName) {
-        // This bypasses the scanner and directly adds a patient to the list
         Patient patient = new Patient(id, firstName, lastName, 30, "Male",
                 "Test Condition", PatientCategory.OUTPATIENT);
         Main.patients.add(patient);
